@@ -27,17 +27,30 @@ def AB_merge(a,b,lastA,lastB):
     return a
 
 # P11.2 把字符串数组中的变位词排到一起挨着
+# 方法一：构造自己的__cmp__函数，采用传统排序方案
 
 def __cmp__(x,y):
 
-    if sorted(x)!= sorted(y):
-        if x[0] < y[0]:
-            return -1
+    return cmp(sorted(x),sorted(y))
+# 方法二，采用散列表
+def anagramSort(ls):
+    dic = dict()
+    result=[]
+    for it in ls:
+        key = ''.join(sorted(it))
+        if not dic.has_key(key):
+            dic[key] = []
+            dic[key].append(it)
         else:
-            return 1
-    else:
-        return 0
+            dic[key].append(it)
 
+
+    for key in dic.iterkeys():
+        for item in dic[key]:
+
+            result.append(item)
+
+    return result
 
 if __name__ == "__main__":
 
@@ -46,5 +59,6 @@ if __name__ == "__main__":
     #print AB_merge(a,b,6,2)
 
     list = ["acre","triangle","race","integral","care","mountain"]
-
-    print sorted(list,__cmp__)
+    #list = [1,100,1,20,1,43]
+    #print sorted(list,__cmp__)
+    print anagramSort(list)
