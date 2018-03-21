@@ -119,12 +119,78 @@ def SearchwithBlanks(ls,left,right,item):
         return SearchwithBlanks(ls, left, mid-1, item)
 
     return -1
-# P11.6 查找某升序M*N矩阵中的某一元素
 
-def SearchMatrix(m,item):
-    return
+# P11.6 查找某升序M*N矩阵中的某一元素
+# (0,0) -> (3,1)
+def SearchMatrix(mat,origin,dest,item):
+    row = dest[0] - origin[0]
+    col = dest[1] - origin[1]
+    if not (row >= 0 and col >= 0 and row < len(mat) and col < len(mat[0])):
+        return -1
+
+    if row == col:
+        i = origin[0]
+        j = origin[1]
+        while mat[i][j] < item and i <= dest[0] and j <= dest[1]:
+            i += 1
+            j += 1
+        if mat[i][j] == item:
+            return (i,j)
+        else:
+            result = SearchMatrix(mat,(i,origin[0]),(dest[0],j-1),item)
+            if result == -1:
+
+                return SearchMatrix(mat,(origin[0],j),(i-1,dest[1]),item)
+            else:
+                return result
+
+    elif row > col:
+        Second_Mat_Origin = (min(row,col) + 1, 0)
+        Second_Mat_Dest = (dest[0], dest[1])
+        return SearchMatrix(mat, Second_Mat_Origin, Second_Mat_Dest, item)
+    else:
+        Second_Mat_Origin = (0,min(row,col)+1)
+        Second_Mat_Dest = (dest[0], dest[1])
+        return SearchMatrix(mat, Second_Mat_Origin, Second_Mat_Dest, item)
+
+# P11.7 最长递增子序列问题
+# 基本解法 复杂度 O(N^2)
+def LongestIncresingSubSeq(ls):
+
+    length = len(ls)
+    # a 以ls中每个元素结尾的最长子序列长度
+    a = [1 for i in range(length)]
+    # b 前驱元素的位置数组
+    b = [i for i in range(length)]
+    max_num = 1
+    max_index = 0
+
+    for i in range(1,length):
+        for j in range(0,i):
+            if ls[i] >= ls[j] and a[j] + 1 >= a[i]:
+                a[i] = a[j] + 1
+                b[i] = j
+
+            if a[i] > max_num:
+                max_num = a[i]
+                max_index = i
+
+    result = [0 for i in range(max_num)]
+    k = max_num-1
+    result[k] = ls[max_index]
+    k = k - 1
+    while b[max_index] != max_index:
+        result[k] = ls[b[max_index]]
+        max_index = b[max_index]
+        k = k - 1
+
+
+    return result,max_num
+
+
 
 if __name__ == "__main__":
+
 
     #a = [1,7,23,56,109,208,306,0,0,0,0]
     #b = [15,65,222]
@@ -138,5 +204,12 @@ if __name__ == "__main__":
     #ls = [50,5,20,30,40]
     #ls = [2,2,2,3,4,2]
 
-    ls = ["amy ","stephen","lily","want"]
-    print SearchwithBlanks(ls,0,len(ls)-1,"gorgerous")
+    #ls = ["amy ","stephen","lily","want"]
+
+    #print SearchwithBlanks(ls,0,len(ls)-1,"gorgerous")
+
+    #Mat = [[15,20,30,40],[20,35,36,41],[30,55,57,58],[40,80,91,92]]
+    #print SearchMatrix(Mat,(0,0),(3,3),15)
+
+    list = [35,36,39,3,15,6,42,41]
+    print LongestIncresingSubSeq(list)
